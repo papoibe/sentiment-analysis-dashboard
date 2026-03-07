@@ -1,0 +1,33 @@
+# Java / Spring Boot
+backend/target/
+backend/.mvn/
+backend/*.jar
+backend/*.war
+
+# Node / React
+frontend/node_modules/
+frontend/build/
+frontend/dist/
+
+# IDE
+.idea/
+.vscode/
+*.iml
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Environment
+.env
+*.env.local
+
+# Logs
+*.log
+
+# Database
+*.sql.bak
+
+# PDF tài liệu gốc (không push tài liệu môn học)
+BaiGiang/
+*.pdf
