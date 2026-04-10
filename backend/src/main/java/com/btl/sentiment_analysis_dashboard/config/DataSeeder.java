@@ -2,7 +2,7 @@ package com.btl.sentiment_analysis_dashboard.config;
 
 import com.btl.sentiment_analysis_dashboard.entity.*;
 import com.btl.sentiment_analysis_dashboard.repository.*;
-import com.btl.sentiment_analysis_dashboard.service.SentimentService;
+import com.btl.sentiment_analysis_dashboard.service.SentimentAnalyzer;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -21,7 +21,7 @@ public class DataSeeder {
                         DataSourceRepository dataSourceRepository,
                         ReviewRepository reviewRepository,
                         SentimentResultRepository sentimentResultRepository,
-                        SentimentService sentimentService,
+                        SentimentAnalyzer sentimentAnalyzer,
                         PasswordEncoder passwordEncoder) {
 
                 return args -> {
@@ -137,8 +137,8 @@ public class DataSeeder {
                                                 .build();
                                 review = reviewRepository.save(review);
 
-                                // Phan tich sentiment bang mock AI service
-                                SentimentResult result = sentimentService.analyzeSentiment(review);
+                                // Phan tich sentiment bang AI (OpenAI hoac Mock tuy cau hinh)
+                                SentimentResult result = sentimentAnalyzer.analyze(review);
                                 sentimentResultRepository.save(result);
                         }
 
