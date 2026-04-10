@@ -1,14 +1,15 @@
 package com.btl.sentiment_analysis_dashboard.service;
 
 import com.btl.sentiment_analysis_dashboard.entity.*;
-import com.btl.sentiment_analysis_dashboard.repository.*;
 import org.springframework.stereotype.Service;
 import java.util.*;
+import java.util.stream.Collectors;
 
 // Service mock phan tich sentiment bang tu khoa tieng Viet
-// Khong can OpenAI API key cho demo - dung logic don gian
+// Khong can OpenAI API key cho demo - dung logic don gian (keyword matching)
+// Implement SentimentAnalyzer interface de co the chuyen sang OpenAI
 @Service
-public class SentimentService {
+public class MockSentimentService implements SentimentAnalyzer {
 
     // Danh sach tu khoa tich cuc tieng Viet
     private static final List<String> POSITIVE_KEYWORDS = Arrays.asList(
@@ -26,7 +27,8 @@ public class SentimentService {
 
     // Phan tich sentiment cho 1 review dua tren tu khoa
     // Tra ve SentimentResult voi nhan va confidence score
-    public SentimentResult analyzeSentiment(Review review) {
+    @Override
+    public SentimentResult analyze(Review review) {
         String content = removeDiacritics(review.getContent().toLowerCase());
 
         int positiveCount = 0;
@@ -77,11 +79,30 @@ public class SentimentService {
                 .build();
     }
 
+    // Trich xuat keyword tu noi dung - dung keyword matching don gian
+    @Override
+    public List<String> extractKeywords(String content) {
+        if (content == null || content.isBlank()) return Collections.emptyList();
+
+        String normalized = removeDiacritics(content.toLowerCase());
+        List<String> found = new ArrayList<>();
+
+        // Tim keyword tich cuc co trong noi dung
+        for (String kw : POSITIVE_KEYWORDS) {
+            if (normalized.contains(kw)) found.add(kw);
+        }
+        // Tim keyword tieu cuc co trong noi dung
+        for (String kw : NEGATIVE_KEYWORDS) {
+            if (normalized.contains(kw)) found.add(kw);
+        }
+
+        return found.stream().distinct().limit(5).collect(Collectors.toList()); // Toi da 5 keyword
+    }
+
     // Loai bo dau tieng Viet de so sanh tu khoa don gian
     private String removeDiacritics(String input) {
         if (input == null)
             return "";
-        // Thay the cac ky tu co dau bang ky tu khong dau
         String result = input;
         result = result.replaceAll("[àáạảãâầấậẩẫăằắặẳẵ]", "a");
         result = result.replaceAll("[èéẹẻẽêềếệểễ]", "e");
