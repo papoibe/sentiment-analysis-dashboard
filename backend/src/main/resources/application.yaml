@@ -46,3 +46,12 @@ app:
     secret: 94f27be08d95123d4c38217eeca292df283f5d5edc4936d5d5b746d88b0a9bd0
     access-token-expiration-ms: 900000
     refresh-token-expiration-ms: 604800000
+
+# OpenAI Configuration - goi truc tiep REST API cho Sentiment Analysis
+openai:
+  api:
+    key: ${OPENAI_API_KEY:your-api-key-here}
+  base-url: https://api.openai.com/v1
+  model: gpt-3.5-turbo
+  temperature: 0.3
+

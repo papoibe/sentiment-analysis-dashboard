@@ -1,9 +1,11 @@
 package com.btl.sentiment_analysis_dashboard.controller;
 
+import com.btl.sentiment_analysis_dashboard.config.OpenAiProperties;
 import com.btl.sentiment_analysis_dashboard.dto.*;
 import com.btl.sentiment_analysis_dashboard.entity.*;
 import com.btl.sentiment_analysis_dashboard.exception.ResourceNotFoundException;
 import com.btl.sentiment_analysis_dashboard.repository.*;
+import com.btl.sentiment_analysis_dashboard.service.SentimentServiceRouter;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -23,6 +25,8 @@ public class AdminController {
     private final ReviewRepository reviewRepository;
     private final DataSourceRepository dataSourceRepository;
     private final SentimentResultRepository sentimentResultRepository;
+    private final SentimentServiceRouter sentimentRouter; // Router AI mode
+    private final OpenAiProperties openAiProperties;
 
     public AdminController(BusinessRepository businessRepository,
             KeywordRepository keywordRepository,
@@ -30,7 +34,9 @@ public class AdminController {
             UserRepository userRepository,
             ReviewRepository reviewRepository,
             DataSourceRepository dataSourceRepository,
-            SentimentResultRepository sentimentResultRepository) {
+            SentimentResultRepository sentimentResultRepository,
+            SentimentServiceRouter sentimentRouter,
+            OpenAiProperties openAiProperties) {
         this.businessRepository = businessRepository;
         this.keywordRepository = keywordRepository;
         this.notificationRepository = notificationRepository;
@@ -38,6 +44,8 @@ public class AdminController {
         this.reviewRepository = reviewRepository;
         this.dataSourceRepository = dataSourceRepository;
         this.sentimentResultRepository = sentimentResultRepository;
+        this.sentimentRouter = sentimentRouter;
+        this.openAiProperties = openAiProperties;
     }
 
     // === BUSINESS CRUD (4 endpoints) ===
@@ -111,13 +119,16 @@ public class AdminController {
 
     // === AI CONFIG (2 endpoints) ===
 
-    // PUT /config/ai - Cau hinh AI model (mock - chi luu vao memory)
+    // PUT /config/ai - Xem cau hinh AI model hien tai (OpenAI hoac Mock)
     @PutMapping("/config/ai")
     public ResponseEntity<ApiResponse<Map<String, Object>>> configureAi(
             @RequestBody Map<String, Object> config) {
         Map<String, Object> result = new HashMap<>();
-        result.put("model", config.getOrDefault("model", "mock-sentiment-v1"));
-        result.put("status", "CONNECTED");
+        result.put("mode", sentimentRouter.getCurrentMode()); // OPENAI_CONNECTED hoac MOCK_MODE
+        result.put("model", sentimentRouter.getCurrentModel());
+        result.put("base_url", openAiProperties.getBaseUrl());
+        result.put("openai_enabled", openAiProperties.isEnabled());
+        result.put("status", openAiProperties.isEnabled() ? "CONNECTED" : "MOCK");
         result.put("last_tested", java.time.LocalDateTime.now());
         return ResponseEntity.ok(ApiResponse.success(result));
     }
@@ -127,9 +138,11 @@ public class AdminController {
     public ResponseEntity<ApiResponse<Map<String, Object>>> getAiUsage() {
         long totalAnalyzed = sentimentResultRepository.count();
         Map<String, Object> usage = new HashMap<>();
+        usage.put("mode", sentimentRouter.getCurrentMode());
+        usage.put("model", sentimentRouter.getCurrentModel());
         usage.put("total_requests", totalAnalyzed);
         usage.put("total_tokens_used", totalAnalyzed * 20); // Uoc tinh
-        usage.put("avg_response_time_ms", 50); // Mock nen rat nhanh
+        usage.put("avg_response_time_ms", openAiProperties.isEnabled() ? 1500 : 50);
         usage.put("error_rate", 0.0);
         return ResponseEntity.ok(ApiResponse.success(usage));
     }

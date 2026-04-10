@@ -18,16 +18,19 @@ public class DataSourceService {
     private final DataSourceRepository dataSourceRepository;
     private final ReviewRepository reviewRepository;
     private final SentimentResultRepository sentimentResultRepository;
-    private final SentimentService sentimentService;
+    private final SentimentAnalyzer sentimentAnalyzer; // Inject SentimentAnalyzer (Router chon OpenAI hoac Mock)
+    private final KeywordExtractionService keywordExtractionService; // Trich xuat keywords tu review
 
     public DataSourceService(DataSourceRepository dataSourceRepository,
             ReviewRepository reviewRepository,
             SentimentResultRepository sentimentResultRepository,
-            SentimentService sentimentService) {
+            SentimentAnalyzer sentimentAnalyzer,
+            KeywordExtractionService keywordExtractionService) {
         this.dataSourceRepository = dataSourceRepository;
         this.reviewRepository = reviewRepository;
         this.sentimentResultRepository = sentimentResultRepository;
-        this.sentimentService = sentimentService;
+        this.sentimentAnalyzer = sentimentAnalyzer;
+        this.keywordExtractionService = keywordExtractionService;
     }
 
     public List<DataSource> findAll() {
@@ -67,6 +70,7 @@ public class DataSourceService {
         DataSource dataSource = findById(dataSourceId);
         int imported = 0;
         int failed = 0;
+        int keywordsExtracted = 0;
 
         try (CSVReader reader = new CSVReader(new InputStreamReader(file.getInputStream()))) {
             List<String[]> rows = reader.readAll();
@@ -106,9 +110,12 @@ public class DataSourceService {
                             .build();
                     review = reviewRepository.save(review);
 
-                    // Phan tich sentiment bang mock AI service
-                    SentimentResult result = sentimentService.analyzeSentiment(review);
+                    // Phan tich sentiment bang AI (OpenAI hoac Mock tuy cau hinh)
+                    SentimentResult result = sentimentAnalyzer.analyze(review);
                     sentimentResultRepository.save(result);
+
+                    // Trich xuat keywords tu noi dung review va luu vao bang review_keywords
+                    keywordsExtracted += keywordExtractionService.extractAndSave(review);
 
                     imported++;
                 } catch (Exception e) {
@@ -123,7 +130,8 @@ public class DataSourceService {
         response.put("imported_count", imported);
         response.put("failed_count", failed);
         response.put("sentiment_analyzed", imported);
-        response.put("message", "Import thành công. AI đã phân tích sentiment.");
+        response.put("keywords_extracted", keywordsExtracted);
+        response.put("message", "Import thành công. AI đã phân tích sentiment và trích xuất keywords.");
         return response;
     }
 }
