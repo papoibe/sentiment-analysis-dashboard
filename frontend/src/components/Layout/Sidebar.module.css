@@ -111,12 +111,33 @@
   font-size: 16px;
 }
 
+/* SVG icon trong menu */
+.menuIconSvg {
+  width: 20px;
+  height: 20px;
+  flex-shrink: 0;
+  object-fit: contain;
+  opacity: 0.7;
+  transition: opacity var(--transition-fast);
+}
+
+.menuItem:hover .menuIconSvg,
+.menuItem.active .menuIconSvg {
+  opacity: 1;
+}
+
+/* Active item: SVG tô trắng */
+.menuItem.active .menuIconSvg {
+  filter: brightness(0) invert(1);
+}
+
 .menuLabel {
   transition: opacity var(--transition-fast);
 }
 
 .sidebar.collapsed .menuLabel,
-.sidebar.collapsed .arrow {
+.sidebar.collapsed .arrow,
+.sidebar.collapsed .arrowSvg {
   opacity: 0;
   pointer-events: none;
 }
@@ -129,6 +150,19 @@
 }
 
 .arrow.open {
+  transform: rotate(180deg);
+}
+
+/* SVG arrow cho dropdown */
+.arrowSvg {
+  width: 14px;
+  height: 14px;
+  margin-left: auto;
+  opacity: 0.5;
+  transition: transform var(--transition-fast), opacity var(--transition-fast);
+}
+
+.arrowSvg.open {
   transform: rotate(180deg);
 }
 

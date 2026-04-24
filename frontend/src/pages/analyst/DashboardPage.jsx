@@ -5,6 +5,12 @@ import TrendLineChart from '../../components/Charts/TrendLineChart';
 import { mockDashboard } from '../../utils/mockData';
 import styles from './DashboardPage.module.css';
 
+// SVG Icons
+import dashboardIcon from '../../assets/icons/dashboard.svg';
+import positiveIcon from '../../assets/icons/positive.svg';
+import negativeIcon from '../../assets/icons/negative.svg';
+import neutralIcon from '../../assets/icons/neutral.svg';
+
 // Dashboard Page — Analyst
 // Tham khảo: Frontend-Guide.md mục 5 Trang 3
 // Gồm: 4 Stat Cards + Pie Chart + Bar Chart + Trend Line Chart
@@ -20,28 +26,28 @@ const DashboardPage = () => {
       {/* 4 Stat Cards */}
       <div className={styles.statsGrid}>
         <StatCard
-          icon="📊"
+          icon={dashboardIcon}
           label="Tổng Reviews"
           value={data.totalReviews.toLocaleString()}
           color="#0EA5E9"
           trend={12}
         />
         <StatCard
-          icon="📈"
+          icon={neutralIcon}
           label="Confidence TB"
           value={`${data.avgConfidence}%`}
           color="#D4A843"
           trend={3.5}
         />
         <StatCard
-          icon="😀"
+          icon={positiveIcon}
           label="Tích cực"
           value={data.positiveCount.toLocaleString()}
           color="#22C55E"
           trend={8}
         />
         <StatCard
-          icon="😡"
+          icon={negativeIcon}
           label="Tiêu cực"
           value={data.negativeCount.toLocaleString()}
           color="#EF4444"

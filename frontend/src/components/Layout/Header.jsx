@@ -3,6 +3,12 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import styles from './Header.module.css';
 
+// SVG Icons
+import notificationIcon from '../../assets/icons/notification.svg';
+import usersIcon from '../../assets/icons/users.svg';
+import passwordIcon from '../../assets/icons/password.svg';
+import logoutIcon from '../../assets/icons/logout.svg';
+
 // Map đường dẫn → tên breadcrumb tiếng Việt
 const breadcrumbMap = {
   '/dashboard': ['Dashboard', 'Tổng quan'],
@@ -72,7 +78,7 @@ const Header = () => {
       <div className={styles.actions}>
         {/* Notification bell */}
         <button className={styles.notifBtn}>
-          🔔
+          <img src={notificationIcon} alt="Thông báo" className={styles.notifIcon} />
           <span className={styles.notifBadge}>3</span>
         </button>
 
@@ -91,13 +97,13 @@ const Header = () => {
               <div className={styles.dropdownEmail}>{user?.email || 'user@email.com'}</div>
             </div>
             <button className={styles.dropdownItem} onClick={() => navigate('/profile')}>
-              👤 Thông tin người dùng
+              <img src={usersIcon} alt="" className={styles.dropdownIcon} /> Thông tin người dùng
             </button>
             <button className={styles.dropdownItem} onClick={() => navigate('/change-password')}>
-              🔑 Đổi mật khẩu
+              <img src={passwordIcon} alt="" className={styles.dropdownIcon} /> Đổi mật khẩu
             </button>
             <button className={`${styles.dropdownItem} ${styles.danger}`} onClick={handleLogout}>
-              🚪 Đăng xuất
+              <img src={logoutIcon} alt="" className={styles.dropdownIcon} /> Đăng xuất
             </button>
           </div>
         </div>
