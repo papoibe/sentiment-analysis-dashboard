@@ -5,6 +5,10 @@ import Pagination from '../../components/common/Pagination';
 import { mockReviews } from '../../utils/mockData';
 import styles from './ReviewManagementPage.module.css';
 
+// SVG Icons
+import flagIcon from '../../assets/icons/flag.svg';
+import assignIcon from '../../assets/icons/assign.svg';
+
 // Review Management — Manager (Flag + Assign)
 // Tham khảo: Frontend-Guide.md Trang 7
 const ReviewManagementPage = () => {
@@ -65,7 +69,7 @@ const ReviewManagementPage = () => {
       <h1 className={styles.pageTitle}>Quản Lý Reviews</h1>
 
       <div className={styles.toolbar}>
-        <input className={styles.searchInput} placeholder="🔍 Tìm kiếm..." value={search}
+        <input className={styles.searchInput} placeholder="Tìm kiếm..." value={search}
           onChange={(e) => { setSearch(e.target.value); setCurrentPage(1); }} />
         <select className={styles.filterSelect} value={statusFilter}
           onChange={(e) => { setStatusFilter(e.target.value); setCurrentPage(1); }}>
@@ -79,8 +83,8 @@ const ReviewManagementPage = () => {
       <DataTable columns={columns} data={pagedData}
         actions={(row) => (
           <>
-            <button className={styles.flagBtn} title="Flag review" onClick={() => setFlagModal(row)}>🚩</button>
-            <button className={styles.assignBtn} title="Assign cho analyst" onClick={() => setAssignModal(row)}>📌</button>
+            <button className={styles.flagBtn} title="Flag review" onClick={() => setFlagModal(row)}><img src={flagIcon} alt="Flag" style={{width:'16px',height:'16px'}} /></button>
+            <button className={styles.assignBtn} title="Assign cho analyst" onClick={() => setAssignModal(row)}><img src={assignIcon} alt="Assign" style={{width:'16px',height:'16px'}} /></button>
           </>
         )}
       />
@@ -91,14 +95,14 @@ const ReviewManagementPage = () => {
       {flagModal && (
         <div className={styles.modalOverlay} onClick={() => setFlagModal(null)}>
           <div className={styles.modal} onClick={(e) => e.stopPropagation()}>
-            <h3>🚩 Flag Review</h3>
+            <h3><img src={flagIcon} alt="" style={{width:'18px',height:'18px',verticalAlign:'middle',marginRight:'6px'}} />Flag Review</h3>
             <p className={styles.modalContent}>"{flagModal.content.slice(0, 80)}..."</p>
             <div className={styles.formGroup}>
               <label>Priority</label>
               <select className={styles.select} value={flagPriority} onChange={(e) => setFlagPriority(e.target.value)}>
-                <option value="HIGH">🔴 HIGH</option>
-                <option value="MEDIUM">🟡 MEDIUM</option>
-                <option value="LOW">🟢 LOW</option>
+                <option value="HIGH">HIGH</option>
+                <option value="MEDIUM">MEDIUM</option>
+                <option value="LOW">LOW</option>
               </select>
             </div>
             <div className={styles.formGroup}>
@@ -118,7 +122,7 @@ const ReviewManagementPage = () => {
       {assignModal && (
         <div className={styles.modalOverlay} onClick={() => setAssignModal(null)}>
           <div className={styles.modal} onClick={(e) => e.stopPropagation()}>
-            <h3>📌 Assign Review</h3>
+            <h3><img src={assignIcon} alt="" style={{width:'18px',height:'18px',verticalAlign:'middle',marginRight:'6px'}} />Assign Review</h3>
             <p className={styles.modalContent}>"{assignModal.content.slice(0, 80)}..."</p>
             <div className={styles.formGroup}>
               <label>Chọn Analyst</label>

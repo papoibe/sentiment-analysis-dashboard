@@ -3,20 +3,32 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import styles from './Sidebar.module.css';
 
+// Import SVG icons từ assets/icons (Hào đã tạo)
+import dashboardIcon from '../../assets/icons/dashboard.svg';
+import reviewsIcon from '../../assets/icons/reviews.svg';
+import reportsIcon from '../../assets/icons/reports.svg';
+import dataSourceIcon from '../../assets/icons/data-source.svg';
+import flagIcon from '../../assets/icons/flag.svg';
+import assignIcon from '../../assets/icons/assign.svg';
+import alertIcon from '../../assets/icons/alert.svg';
+import usersIcon from '../../assets/icons/users.svg';
+import settingsIcon from '../../assets/icons/settings.svg';
+import chevronIcon from '../../assets/icons/chevron-down.svg';
+
 // Cấu hình menu theo role — tham khảo Frontend-Guide.md mục 4.2
 const menuConfig = {
   ANALYST: [
     {
-      icon: '📊', label: 'Dashboard', path: '/dashboard',
+      icon: dashboardIcon, label: 'Dashboard', path: '/dashboard',
     },
     {
-      icon: '💬', label: 'Reviews', children: [
+      icon: reviewsIcon, label: 'Reviews', children: [
         { label: 'Danh sách', path: '/reviews' },
         { label: 'Top Reviews', path: '/reviews/top' },
       ],
     },
     {
-      icon: '📄', label: 'Báo cáo', children: [
+      icon: reportsIcon, label: 'Báo cáo', children: [
         { label: 'Export', path: '/reports' },
         { label: 'Custom Reports', path: '/reports/custom' },
       ],
@@ -24,37 +36,37 @@ const menuConfig = {
   ],
   MANAGER: [
     {
-      icon: '🗄️', label: 'Nguồn dữ liệu', children: [
+      icon: dataSourceIcon, label: 'Nguồn dữ liệu', children: [
         { label: 'Danh sách', path: '/data-sources' },
         { label: 'Import', path: '/data-sources/import' },
       ],
     },
     {
-      icon: '💬', label: 'Quản lý Review', path: '/review-management',
+      icon: reviewsIcon, label: 'Quản lý Review', path: '/review-management',
     },
     {
-      icon: '📋', label: 'Theo dõi xử lý', path: '/review-tracking',
+      icon: assignIcon, label: 'Theo dõi xử lý', path: '/review-tracking',
     },
     {
-      icon: '🔔', label: 'Cảnh báo', path: '/alerts',
+      icon: alertIcon, label: 'Cảnh báo', path: '/alerts',
     },
   ],
   ADMIN: [
     {
-      icon: '👥', label: 'Người dùng', children: [
+      icon: usersIcon, label: 'Người dùng', children: [
         { label: 'Danh sách', path: '/users' },
         { label: 'Tạo mới', path: '/users/create' },
       ],
     },
     {
-      icon: '⚙️', label: 'Cài đặt', children: [
+      icon: settingsIcon, label: 'Cài đặt', children: [
         { label: 'Hệ thống', path: '/settings' },
         { label: 'AI Config', path: '/settings/ai' },
         { label: 'Keywords', path: '/settings/keywords' },
       ],
     },
     {
-      icon: '📊', label: 'Báo cáo hệ thống', path: '/system-reports',
+      icon: reportsIcon, label: 'Báo cáo hệ thống', path: '/system-reports',
     },
   ],
 };
@@ -104,12 +116,15 @@ const Sidebar = () => {
                 }
               }}
             >
-              <span className={styles.menuIcon}>{item.icon}</span>
+              {/* SVG icon thay cho emoji */}
+              <img src={item.icon} alt={item.label} className={styles.menuIconSvg} />
               <span className={styles.menuLabel}>{item.label}</span>
               {item.children && (
-                <span className={`${styles.arrow} ${openMenus[index] ? styles.open : ''}`}>
-                  ▼
-                </span>
+                <img
+                  src={chevronIcon}
+                  alt="expand"
+                  className={`${styles.arrowSvg} ${openMenus[index] ? styles.open : ''}`}
+                />
               )}
             </button>
 

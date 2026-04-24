@@ -5,6 +5,13 @@ import Pagination from '../../components/common/Pagination';
 import { mockReviews } from '../../utils/mockData';
 import styles from './ReviewsPage.module.css';
 
+// SVG Icons
+import searchIcon from '../../assets/icons/search.svg';
+import aiRobotIcon from '../../assets/icons/ai-robot.svg';
+import closeIcon from '../../assets/icons/close.svg';
+import positiveIcon from '../../assets/icons/positive.svg';
+import negativeIcon from '../../assets/icons/negative.svg';
+
 // Reviews Page — Analyst
 // Tham khảo: Frontend-Guide.md mục 5 Trang 4
 const ReviewsPage = () => {
@@ -56,7 +63,7 @@ const ReviewsPage = () => {
       <div className={styles.toolbar}>
         <input
           className={styles.searchInput}
-          placeholder="🔍 Tìm kiếm review..."
+          placeholder="Tìm kiếm review..."
           value={search}
           onChange={(e) => { setSearch(e.target.value); setCurrentPage(1); }}
         />
@@ -76,8 +83,8 @@ const ReviewsPage = () => {
       <div className={styles.tabs}>
         {[
           { key: 'all', label: 'Tất cả' },
-          { key: 'top_positive', label: '⭐ Top Positive' },
-          { key: 'top_negative', label: '⚠️ Top Negative' },
+          { key: 'top_positive', label: 'Top Positive' },
+          { key: 'top_negative', label: 'Top Negative' },
         ].map((tab) => (
           <button
             key={tab.key}
@@ -96,7 +103,7 @@ const ReviewsPage = () => {
             className={styles.aiBtn}
             title="Xem chi tiết AI"
             onClick={() => setSelectedReview(row)}
-          >🤖</button>
+          ><img src={aiRobotIcon} alt="AI" style={{width:'18px',height:'18px'}} /></button>
         )}
       />
 
@@ -113,8 +120,8 @@ const ReviewsPage = () => {
         <div className={styles.modalOverlay} onClick={() => setSelectedReview(null)}>
           <div className={styles.modal} onClick={(e) => e.stopPropagation()}>
             <div className={styles.modalHeader}>
-              <h3>🤖 Chi tiết AI Analysis</h3>
-              <button className={styles.closeBtn} onClick={() => setSelectedReview(null)}>✕</button>
+              <h3><img src={aiRobotIcon} alt="AI" style={{width:'20px',height:'20px',verticalAlign:'middle',marginRight:'8px'}} />Chi tiết AI Analysis</h3>
+              <button className={styles.closeBtn} onClick={() => setSelectedReview(null)}><img src={closeIcon} alt="Đóng" style={{width:'16px',height:'16px'}} /></button>
             </div>
             <div className={styles.modalBody}>
               <p className={styles.modalLabel}>Nội dung review:</p>

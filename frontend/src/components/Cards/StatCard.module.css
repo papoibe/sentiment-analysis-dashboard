@@ -30,6 +30,12 @@
   font-size: 22px;
 }
 
+.iconSvg {
+  width: 28px;
+  height: 28px;
+  object-fit: contain;
+}
+
 .info {
   display: flex;
   flex-direction: column;

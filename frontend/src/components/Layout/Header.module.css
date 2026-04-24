@@ -73,6 +73,21 @@
   padding: 0 4px;
 }
 
+/* SVG icon cho notification bell */
+.notifIcon {
+  width: 18px;
+  height: 18px;
+  object-fit: contain;
+}
+
+/* SVG icon trong dropdown menu */
+.dropdownIcon {
+  width: 16px;
+  height: 16px;
+  object-fit: contain;
+  opacity: 0.6;
+}
+
 /* Avatar + tên user */
 .userInfo {
   display: flex;
