@@ -1,0 +1,192 @@
+/* ============================================
+   Sidebar — 240px mở / 60px thu gọn
+   Tham khảo: Frontend-Guide.md mục 4.2
+   ============================================ */
+
+.sidebar {
+  width: var(--sidebar-width);
+  height: 100vh;
+  background: var(--bg-sidebar);
+  border-right: 1px solid var(--border-color);
+  display: flex;
+  flex-direction: column;
+  position: fixed;
+  left: 0;
+  top: 0;
+  z-index: 100;
+  transition: width var(--transition-normal);
+  overflow: hidden;
+}
+
+.sidebar.collapsed {
+  width: var(--sidebar-collapsed);
+}
+
+/* Logo */
+.logo {
+  height: var(--header-height);
+  display: flex;
+  align-items: center;
+  padding: 0 20px;
+  border-bottom: 1px solid var(--border-color);
+  gap: 10px;
+  flex-shrink: 0;
+}
+
+.logoIcon {
+  width: 32px;
+  height: 32px;
+  background: var(--primary);
+  border-radius: var(--radius-md);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-weight: 700;
+  font-size: 14px;
+  flex-shrink: 0;
+}
+
+.logoText {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--text-primary);
+  white-space: nowrap;
+  transition: opacity var(--transition-fast);
+}
+
+.sidebar.collapsed .logoText {
+  opacity: 0;
+}
+
+/* Nav */
+.nav {
+  flex: 1;
+  padding: 12px 0;
+  overflow-y: auto;
+}
+
+/* Menu group */
+.menuGroup {
+  margin-bottom: 4px;
+}
+
+.menuItem {
+  display: flex;
+  align-items: center;
+  padding: 10px 20px;
+  color: var(--text-secondary);
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  gap: 12px;
+  white-space: nowrap;
+  border: none;
+  background: none;
+  width: 100%;
+  text-align: left;
+}
+
+.menuItem:hover {
+  color: var(--text-primary);
+  background: var(--border-light);
+}
+
+/* Active item — nền vàng cam, text trắng, bo góc phải */
+.menuItem.active {
+  background: var(--primary);
+  color: var(--text-white);
+  border-radius: 0 24px 24px 0;
+  margin-right: 12px;
+}
+
+.menuIcon {
+  width: 20px;
+  height: 20px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+}
+
+.menuLabel {
+  transition: opacity var(--transition-fast);
+}
+
+.sidebar.collapsed .menuLabel,
+.sidebar.collapsed .arrow {
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* Mũi tên dropdown sub-menu */
+.arrow {
+  margin-left: auto;
+  font-size: 12px;
+  transition: transform var(--transition-fast), opacity var(--transition-fast);
+}
+
+.arrow.open {
+  transform: rotate(180deg);
+}
+
+/* Sub-menu items — indent vào */
+.subMenu {
+  overflow: hidden;
+  max-height: 0;
+  transition: max-height var(--transition-normal);
+}
+
+.subMenu.open {
+  max-height: 200px;
+}
+
+.subMenuItem {
+  display: flex;
+  align-items: center;
+  padding: 8px 20px 8px 52px;
+  color: var(--text-secondary);
+  font-size: 13px;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  border: none;
+  background: none;
+  width: 100%;
+  text-align: left;
+}
+
+.subMenuItem:hover {
+  color: var(--text-primary);
+  background: var(--border-light);
+}
+
+.subMenuItem.active {
+  color: var(--primary-dark);
+  font-weight: 600;
+}
+
+/* Toggle button — thu gọn sidebar */
+.toggleBtn {
+  height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 20px;
+  border-top: 1px solid var(--border-color);
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  background: none;
+  border-left: none;
+  border-right: none;
+  border-bottom: none;
+  width: 100%;
+  font-size: 18px;
+}
+
+.toggleBtn:hover {
+  background: var(--border-light);
+  color: var(--text-primary);
+}

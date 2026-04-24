@@ -1,0 +1,238 @@
+/* ============================================
+   Login & Register Pages
+   Tham khảo: Frontend-Guide.md mục 5 Trang 1-2
+   Layout: 2 cột — gradient bên trái + form bên phải
+   ============================================ */
+
+.container {
+  display: flex;
+  min-height: 100vh;
+}
+
+/* Cột trái — gradient trang trí */
+.leftPanel {
+  flex: 1;
+  background: linear-gradient(135deg, #1e3a5f 0%, #2d5a87 30%, #D4A843 100%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  padding: 40px;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Vòng tròn trang trí nền */
+.leftPanel::before {
+  content: '';
+  position: absolute;
+  width: 300px;
+  height: 300px;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 50%;
+  top: -50px;
+  left: -50px;
+}
+
+.leftPanel::after {
+  content: '';
+  position: absolute;
+  width: 200px;
+  height: 200px;
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 50%;
+  bottom: 50px;
+  right: -30px;
+}
+
+.leftTitle {
+  font-size: 36px;
+  font-weight: 700;
+  margin-bottom: 12px;
+  z-index: 1;
+  text-align: center;
+}
+
+.leftSubtitle {
+  font-size: 16px;
+  opacity: 0.85;
+  z-index: 1;
+  text-align: center;
+  line-height: 1.6;
+  max-width: 360px;
+}
+
+/* Cột phải — form đăng nhập/đăng ký */
+.rightPanel {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 40px;
+  background: white;
+}
+
+.formWrapper {
+  width: 100%;
+  max-width: 400px;
+}
+
+/* Logo */
+.formLogo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 32px;
+}
+
+.formLogoIcon {
+  width: 40px;
+  height: 40px;
+  background: var(--primary);
+  border-radius: var(--radius-md);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-weight: 700;
+  font-size: 18px;
+}
+
+.formLogoText {
+  font-size: 24px;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.formTitle {
+  font-size: 24px;
+  font-weight: 700;
+  margin-bottom: 8px;
+  color: var(--text-primary);
+}
+
+.formSubtitle {
+  font-size: 14px;
+  color: var(--text-secondary);
+  margin-bottom: 28px;
+}
+
+/* Form fields */
+.formGroup {
+  margin-bottom: 18px;
+}
+
+.formLabel {
+  display: block;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text-primary);
+  margin-bottom: 6px;
+}
+
+.formInput {
+  width: 100%;
+  padding: 10px 14px;
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-sm);
+  font-size: 14px;
+  color: var(--text-primary);
+  background: white;
+  transition: border-color var(--transition-fast);
+}
+
+.formInput:focus {
+  outline: none;
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px var(--primary-light);
+}
+
+.formInput::placeholder {
+  color: var(--text-placeholder);
+}
+
+/* Checkbox ghi nhớ */
+.rememberRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 24px;
+  font-size: 13px;
+}
+
+.checkboxLabel {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+  color: var(--text-secondary);
+}
+
+.forgotLink {
+  color: var(--primary);
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.forgotLink:hover {
+  text-decoration: underline;
+}
+
+/* Nút submit */
+.submitBtn {
+  width: 100%;
+  padding: 12px;
+  background: var(--primary);
+  color: white;
+  font-size: 14px;
+  font-weight: 600;
+  border-radius: var(--radius-sm);
+  transition: background var(--transition-fast);
+}
+
+.submitBtn:hover {
+  background: var(--primary-dark);
+}
+
+.submitBtn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* Link chuyển trang */
+.switchLink {
+  text-align: center;
+  margin-top: 20px;
+  font-size: 13px;
+  color: var(--text-secondary);
+}
+
+.switchLink a {
+  color: var(--primary);
+  font-weight: 600;
+}
+
+.switchLink a:hover {
+  text-decoration: underline;
+}
+
+/* Error message */
+.error {
+  background: var(--negative-bg);
+  color: var(--negative);
+  padding: 10px 14px;
+  border-radius: var(--radius-sm);
+  font-size: 13px;
+  margin-bottom: 16px;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .leftPanel {
+    display: none;
+  }
+  .rightPanel {
+    padding: 24px;
+  }
+}

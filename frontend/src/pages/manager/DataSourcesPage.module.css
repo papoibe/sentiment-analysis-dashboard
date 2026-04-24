@@ -1,0 +1,25 @@
+.pageTitle { font-size: 24px; font-weight: 700; margin-bottom: 20px; }
+.toolbar { display: flex; gap: 12px; margin-bottom: 16px; align-items: center; flex-wrap: wrap; }
+.searchInput {
+  flex: 1; min-width: 200px; padding: 10px 14px; border: 1px solid var(--border-color);
+  border-radius: var(--radius-sm); font-size: 14px;
+}
+.searchInput:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 3px var(--primary-light); }
+.addBtn {
+  padding: 10px 20px; background: var(--primary); color: white;
+  border-radius: var(--radius-sm); font-weight: 600; font-size: 14px; cursor: pointer;
+}
+.addBtn:hover { background: var(--primary-dark); }
+.importBtn {
+  padding: 10px 20px; background: white; color: var(--primary);
+  border: 1px solid var(--primary); border-radius: var(--radius-sm);
+  font-weight: 600; font-size: 14px; cursor: pointer;
+  transition: all var(--transition-fast);
+}
+.importBtn:hover { background: var(--primary-light); }
+.actionBtn {
+  width: 30px; height: 30px; border-radius: var(--radius-sm);
+  background: var(--border-light); font-size: 14px; cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+}
+.actionBtn:hover { background: var(--border-color); }
