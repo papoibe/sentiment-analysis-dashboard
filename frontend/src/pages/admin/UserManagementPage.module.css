@@ -1,0 +1,43 @@
+.pageTitle { font-size: 24px; font-weight: 700; margin-bottom: 20px; }
+.toolbar { display: flex; gap: 12px; margin-bottom: 16px; align-items: center; }
+.searchInput {
+  flex: 1; padding: 10px 14px; border: 1px solid var(--border-color);
+  border-radius: var(--radius-sm); font-size: 14px;
+}
+.searchInput:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 3px var(--primary-light); }
+.addBtn {
+  padding: 10px 20px; background: var(--primary); color: white;
+  border-radius: var(--radius-sm); font-weight: 600; font-size: 14px;
+  text-decoration: none; transition: background var(--transition-fast);
+}
+.addBtn:hover { background: var(--primary-dark); }
+.actionBtn {
+  width: 30px; height: 30px; border-radius: var(--radius-sm);
+  background: var(--border-light); font-size: 14px; cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  transition: all var(--transition-fast);
+}
+.actionBtn:hover { background: var(--border-color); }
+.deleteBtn:hover { background: var(--negative-bg); }
+
+/* Modal */
+.modalOverlay {
+  position: fixed; inset: 0; background: rgba(0,0,0,0.4);
+  display: flex; align-items: center; justify-content: center; z-index: 500;
+}
+.modal {
+  background: white; border-radius: var(--radius-lg); padding: 24px;
+  width: 400px; box-shadow: var(--shadow-lg);
+}
+.modal h3 { margin-bottom: 12px; }
+.modal p { color: var(--text-secondary); margin-bottom: 20px; font-size: 14px; }
+.modalActions { display: flex; gap: 12px; justify-content: flex-end; }
+.cancelBtn {
+  padding: 8px 20px; border: 1px solid var(--border-color);
+  border-radius: var(--radius-sm); background: white;
+  font-size: 14px; cursor: pointer;
+}
+.confirmDeleteBtn {
+  padding: 8px 20px; background: var(--negative); color: white;
+  border-radius: var(--radius-sm); font-size: 14px; font-weight: 600; cursor: pointer;
+}

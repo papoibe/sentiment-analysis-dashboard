@@ -1,0 +1,15 @@
+.badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 3px 10px;
+  border-radius: var(--radius-pill);
+  font-size: 12px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+.positive { background: var(--positive-bg); color: var(--positive); }
+.negative { background: var(--negative-bg); color: var(--negative); }
+.neutral  { background: var(--neutral-bg);  color: var(--neutral); }
+.admin    { background: var(--badge-admin-bg);   color: var(--badge-admin); }
+.manager  { background: var(--badge-manager-bg); color: var(--badge-manager); }
+.analyst  { background: var(--badge-analyst-bg); color: var(--badge-analyst); }

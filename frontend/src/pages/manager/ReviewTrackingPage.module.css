@@ -1,0 +1,14 @@
+.pageTitle { font-size: 24px; font-weight: 700; margin-bottom: 20px; }
+.toolbar { display: flex; gap: 12px; margin-bottom: 16px; flex-wrap: wrap; }
+.filterSelect {
+  padding: 10px 14px; border: 1px solid var(--border-color);
+  border-radius: var(--radius-sm); font-size: 13px; cursor: pointer;
+}
+.summaryRow { display: flex; gap: 16px; margin-bottom: 20px; flex-wrap: wrap; }
+.summaryCard {
+  flex: 1; min-width: 140px; padding: 16px; background: white;
+  border-radius: var(--radius-sm); box-shadow: var(--shadow-sm);
+  border-left: 4px solid; display: flex; flex-direction: column; gap: 4px;
+}
+.summaryCount { font-size: 28px; font-weight: 700; }
+.summaryLabel { font-size: 13px; color: var(--text-secondary); }

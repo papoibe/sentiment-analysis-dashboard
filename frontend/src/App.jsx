@@ -1,121 +1,72 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from './assets/vite.svg'
-import heroImg from './assets/hero.png'
-import './App.css'
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import { AuthProvider } from './context/AuthContext';
+import MainLayout from './components/Layout/MainLayout';
+
+// Auth pages
+import LoginPage from './pages/auth/LoginPage';
+import RegisterPage from './pages/auth/RegisterPage';
+
+// Sprint 2: Dashboard
+import DashboardPage from './pages/analyst/DashboardPage';
+
+// Sprint 3: Reviews + Users
+import ReviewsPage from './pages/analyst/ReviewsPage';
+import UserManagementPage from './pages/admin/UserManagementPage';
+
+// Sprint 4: Data Sources + Import
+import DataSourcesPage from './pages/manager/DataSourcesPage';
+import ImportPage from './pages/manager/ImportPage';
+
+// Sprint 5: Reports + System Config
+import ReportsPage from './pages/analyst/ReportsPage';
+import SystemConfigPage from './pages/admin/SystemConfigPage';
+import SystemReportsPage from './pages/admin/SystemReportsPage';
+
+// Sprint 6: Review Mgmt + Tracking + Alerts (Manager)
+import ReviewManagementPage from './pages/manager/ReviewManagementPage';
+import ReviewTrackingPage from './pages/manager/ReviewTrackingPage';
+import AlertsPage from './pages/manager/AlertsPage';
 
 function App() {
-  const [count, setCount] = useState(0)
-
   return (
-    <>
-      <section id="center">
-        <div className="hero">
-          <img src={heroImg} className="base" width="170" height="179" alt="" />
-          <img src={reactLogo} className="framework" alt="React logo" />
-          <img src={viteLogo} className="vite" alt="Vite logo" />
-        </div>
-        <div>
-          <h1>Get started</h1>
-          <p>
-            Edit <code>src/App.jsx</code> and save to test <code>HMR</code>
-          </p>
-        </div>
-        <button
-          className="counter"
-          onClick={() => setCount((count) => count + 1)}
-        >
-          Count is {count}
-        </button>
-      </section>
+    <AuthProvider>
+      <BrowserRouter>
+        <Routes>
+          {/* Public routes */}
+          <Route path="/login" element={<LoginPage />} />
+          <Route path="/register" element={<RegisterPage />} />
 
-      <div className="ticks"></div>
+          {/* Protected routes — bọc trong MainLayout (Sidebar + Header) */}
+          <Route element={<MainLayout />}>
+            {/* ANALYST — Dashboard, Reviews, Reports */}
+            <Route path="/dashboard" element={<DashboardPage />} />
+            <Route path="/reviews" element={<ReviewsPage />} />
+            <Route path="/reviews/top" element={<ReviewsPage />} />
+            <Route path="/reports" element={<ReportsPage />} />
+            <Route path="/reports/custom" element={<ReportsPage />} />
 
-      <section id="next-steps">
-        <div id="docs">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#documentation-icon"></use>
-          </svg>
-          <h2>Documentation</h2>
-          <p>Your questions, answered</p>
-          <ul>
-            <li>
-              <a href="https://vite.dev/" target="_blank">
-                <img className="logo" src={viteLogo} alt="" />
-                Explore Vite
-              </a>
-            </li>
-            <li>
-              <a href="https://react.dev/" target="_blank">
-                <img className="button-icon" src={reactLogo} alt="" />
-                Learn more
-              </a>
-            </li>
-          </ul>
-        </div>
-        <div id="social">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#social-icon"></use>
-          </svg>
-          <h2>Connect with us</h2>
-          <p>Join the Vite community</p>
-          <ul>
-            <li>
-              <a href="https://github.com/vitejs/vite" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#github-icon"></use>
-                </svg>
-                GitHub
-              </a>
-            </li>
-            <li>
-              <a href="https://chat.vite.dev/" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#discord-icon"></use>
-                </svg>
-                Discord
-              </a>
-            </li>
-            <li>
-              <a href="https://x.com/vite_js" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#x-icon"></use>
-                </svg>
-                X.com
-              </a>
-            </li>
-            <li>
-              <a href="https://bsky.app/profile/vite.dev" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#bluesky-icon"></use>
-                </svg>
-                Bluesky
-              </a>
-            </li>
-          </ul>
-        </div>
-      </section>
+            {/* MANAGER — Data Sources, Review Mgmt, Tracking, Alerts */}
+            <Route path="/data-sources" element={<DataSourcesPage />} />
+            <Route path="/data-sources/import" element={<ImportPage />} />
+            <Route path="/review-management" element={<ReviewManagementPage />} />
+            <Route path="/review-tracking" element={<ReviewTrackingPage />} />
+            <Route path="/alerts" element={<AlertsPage />} />
 
-      <div className="ticks"></div>
-      <section id="spacer"></section>
-    </>
-  )
+            {/* ADMIN — Users, Settings, System Reports */}
+            <Route path="/users" element={<UserManagementPage />} />
+            <Route path="/users/create" element={<UserManagementPage />} />
+            <Route path="/settings" element={<SystemConfigPage />} />
+            <Route path="/settings/ai" element={<SystemConfigPage />} />
+            <Route path="/settings/keywords" element={<SystemConfigPage />} />
+            <Route path="/system-reports" element={<SystemReportsPage />} />
+          </Route>
+
+          <Route path="/" element={<Navigate to="/login" replace />} />
+          <Route path="*" element={<Navigate to="/login" replace />} />
+        </Routes>
+      </BrowserRouter>
+    </AuthProvider>
+  );
 }
 
-export default App
+export default App;
