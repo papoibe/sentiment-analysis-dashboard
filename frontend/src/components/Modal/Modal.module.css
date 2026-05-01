@@ -1,0 +1,107 @@
+/* ============================================
+   Modal — Component dùng chung
+   Hỗ trợ 3 size: sm (360px), md (480px), lg (640px)
+   ============================================ */
+
+/* Overlay nền tối */
+.overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.45);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 500;
+  animation: fadeIn 0.2s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+/* Modal container */
+.modal {
+  background: var(--bg-card, #fff);
+  border-radius: var(--radius-lg, 12px);
+  box-shadow: var(--shadow-lg, 0 8px 32px rgba(0, 0, 0, 0.18));
+  display: flex;
+  flex-direction: column;
+  max-height: 85vh;
+  animation: slideUp 0.25s ease;
+}
+
+@keyframes slideUp {
+  from { opacity: 0; transform: translateY(16px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* 3 kích thước */
+.sm { width: 360px; }
+.md { width: 480px; }
+.lg { width: 640px; }
+
+/* Header — title + nút đóng */
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 18px 24px;
+  border-bottom: 1px solid var(--border-color, #e5e7eb);
+}
+
+.title {
+  font-size: 17px;
+  font-weight: 700;
+  color: var(--text-primary, #1e293b);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0;
+}
+
+.titleIcon {
+  width: 20px;
+  height: 20px;
+  object-fit: contain;
+}
+
+.closeBtn {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: none;
+  background: var(--border-light, #f1f5f9);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background 0.15s ease;
+}
+
+.closeBtn:hover {
+  background: var(--border-color, #e5e7eb);
+}
+
+.closeIcon {
+  width: 14px;
+  height: 14px;
+  opacity: 0.6;
+}
+
+/* Body — nội dung chính, scrollable */
+.body {
+  padding: 20px 24px;
+  overflow-y: auto;
+  flex: 1;
+}
+
+/* Footer — các nút hành động */
+.footer {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 10px;
+  padding: 14px 24px;
+  border-top: 1px solid var(--border-color, #e5e7eb);
+}
