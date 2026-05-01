@@ -26,6 +26,7 @@ public class AuthService {
     private final AuthenticationManager authenticationManager;
     private final UserDetailsService userDetailsService;
     private final UserMapper userMapper;
+    private final NotificationService notificationService;
 
     public AuthService(
             UserRepository userRepository,
@@ -33,13 +34,15 @@ public class AuthService {
             JwtService jwtService,
             AuthenticationManager authenticationManager,
             UserDetailsService userDetailsService,
-            UserMapper userMapper) {
+            UserMapper userMapper,
+            NotificationService notificationService) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.jwtService = jwtService;
         this.authenticationManager = authenticationManager;
         this.userDetailsService = userDetailsService;
         this.userMapper = userMapper;
+        this.notificationService = notificationService;
     }
 
     /**
@@ -61,6 +64,11 @@ public class AuthService {
                         .orElseThrow(() -> new RuntimeException("User không tồn tại")));
 
         log.info("Đăng nhập thành công: {}", user.getUsername());
+
+        // Tao thong bao chao mung khi dang nhap thanh cong
+        try { notificationService.createWelcome(user); } catch (Exception e) {
+            log.warn("Khong tao duoc welcome notification: {}", e.getMessage());
+        }
 
         return new AuthResponse(
                 accessToken,
@@ -89,6 +97,11 @@ public class AuthService {
 
         User savedUser = userRepository.save(user); // Lưu user vào database
         log.info("Đã tạo tài khoản: {}", savedUser.getUsername());
+
+        // Thong bao cho ADMIN khi co user moi dang ky
+        try { notificationService.notifyUserCreated(savedUser.getUsername()); } catch (Exception e) {
+            log.warn("Khong tao duoc notification: {}", e.getMessage());
+        }
 
         return userMapper.toResponse(savedUser); // Chuyển entity sang DTO response
     }

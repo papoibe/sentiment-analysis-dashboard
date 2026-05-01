@@ -5,6 +5,7 @@ import com.btl.sentiment_analysis_dashboard.dto.*;
 import com.btl.sentiment_analysis_dashboard.entity.*;
 import com.btl.sentiment_analysis_dashboard.exception.ResourceNotFoundException;
 import com.btl.sentiment_analysis_dashboard.repository.*;
+import com.btl.sentiment_analysis_dashboard.service.NotificationService;
 import com.btl.sentiment_analysis_dashboard.service.SentimentServiceRouter;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -12,8 +13,8 @@ import org.springframework.web.bind.annotation.*;
 import java.util.*;
 
 // Controller cho Admin - Business CRUD (4 endpoints), Keyword CRUD (4 endpoints),
-// AI Config (2 endpoints), System Report (1 endpoint), Notification CRUD (4 endpoints)
-// Tong: 15 endpoints
+// AI Config (2 endpoints), System Report (1 endpoint), Notification (7 endpoints)
+// Tong: 18 endpoints
 @RestController
 @RequestMapping("/api/v1")
 public class AdminController {
@@ -36,7 +37,8 @@ public class AdminController {
             DataSourceRepository dataSourceRepository,
             SentimentResultRepository sentimentResultRepository,
             SentimentServiceRouter sentimentRouter,
-            OpenAiProperties openAiProperties) {
+            OpenAiProperties openAiProperties,
+            NotificationService notificationService) {
         this.businessRepository = businessRepository;
         this.keywordRepository = keywordRepository;
         this.notificationRepository = notificationRepository;
@@ -46,6 +48,7 @@ public class AdminController {
         this.sentimentResultRepository = sentimentResultRepository;
         this.sentimentRouter = sentimentRouter;
         this.openAiProperties = openAiProperties;
+        this.notificationService = notificationService;
     }
 
     // === BUSINESS CRUD (4 endpoints) ===
@@ -166,21 +169,43 @@ public class AdminController {
         return ResponseEntity.ok(ApiResponse.success(report));
     }
 
-    // === NOTIFICATION CRUD (4 endpoints) ===
+    // === NOTIFICATION ENDPOINTS (7 endpoints) ===
 
+    private final NotificationService notificationService;
+
+    // GET /notifications — lay thong bao theo role cua user dang dang nhap
     @GetMapping("/notifications")
-    public ResponseEntity<ApiResponse<List<Notification>>> getAllNotifications() {
-        return ResponseEntity.ok(ApiResponse.success(notificationRepository.findAll()));
+    public ResponseEntity<ApiResponse<List<Notification>>> getNotifications(
+            @RequestParam(required = false) String role) {
+        // Neu khong truyen role, tra tat ca
+        String targetRole = (role != null) ? role : "ALL";
+        List<Notification> notifications = notificationService.getForRole(targetRole);
+        return ResponseEntity.ok(ApiResponse.success(notifications));
     }
 
+    // GET /notifications/unread-count — dem so thong bao chua doc
+    @GetMapping("/notifications/unread-count")
+    public ResponseEntity<ApiResponse<Map<String, Object>>> getUnreadCount(
+            @RequestParam(required = false, defaultValue = "ALL") String role) {
+        long count = notificationService.countUnread(role);
+        Map<String, Object> result = new HashMap<>();
+        result.put("unread_count", count);
+        return ResponseEntity.ok(ApiResponse.success(result));
+    }
+
+    // POST /notifications — tao thong bao moi (Admin gui)
     @PostMapping("/notifications")
     public ResponseEntity<ApiResponse<Notification>> createNotification(
             @RequestBody Notification notification) {
-        notification.setSentAt(java.time.LocalDateTime.now());
+        Notification created = notificationService.create(
+                notification.getTitle(),
+                notification.getType(),
+                notification.getTargetRole() != null ? notification.getTargetRole() : "ALL");
         return ResponseEntity.status(HttpStatus.CREATED)
-                .body(ApiResponse.success(notificationRepository.save(notification)));
+                .body(ApiResponse.success(created));
     }
 
+    // GET /notifications/{id} — xem chi tiet 1 thong bao
     @GetMapping("/notifications/{id}")
     public ResponseEntity<ApiResponse<Notification>> getNotification(@PathVariable Long id) {
         Notification notification = notificationRepository.findById(id)
@@ -188,6 +213,22 @@ public class AdminController {
         return ResponseEntity.ok(ApiResponse.success(notification));
     }
 
+    // PUT /notifications/{id}/read — danh dau 1 thong bao da doc
+    @PutMapping("/notifications/{id}/read")
+    public ResponseEntity<ApiResponse<String>> markAsRead(@PathVariable Long id) {
+        notificationService.markAsRead(id);
+        return ResponseEntity.ok(ApiResponse.success("Đã đánh dấu đã đọc"));
+    }
+
+    // PUT /notifications/read-all — danh dau tat ca thong bao da doc
+    @PutMapping("/notifications/read-all")
+    public ResponseEntity<ApiResponse<String>> markAllAsRead(
+            @RequestParam(required = false, defaultValue = "ALL") String role) {
+        notificationService.markAllAsRead(role);
+        return ResponseEntity.ok(ApiResponse.success("Đã đánh dấu tất cả đã đọc"));
+    }
+
+    // DELETE /notifications/{id}
     @DeleteMapping("/notifications/{id}")
     public ResponseEntity<ApiResponse<String>> deleteNotification(@PathVariable Long id) {
         notificationRepository.deleteById(id);

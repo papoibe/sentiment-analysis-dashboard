@@ -4,6 +4,7 @@ import com.btl.sentiment_analysis_dashboard.dto.*;
 import com.btl.sentiment_analysis_dashboard.entity.*;
 import com.btl.sentiment_analysis_dashboard.exception.ResourceNotFoundException;
 import com.btl.sentiment_analysis_dashboard.repository.*;
+import com.btl.sentiment_analysis_dashboard.service.NotificationService;
 import org.springframework.data.domain.*;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -19,15 +20,18 @@ public class ReviewController {
         private final SentimentResultRepository sentimentResultRepository;
         private final UserRepository userRepository;
         private final ReviewAssignmentRepository reviewAssignmentRepository;
+        private final NotificationService notificationService;
 
         public ReviewController(ReviewRepository reviewRepository,
                         SentimentResultRepository sentimentResultRepository,
                         UserRepository userRepository,
-                        ReviewAssignmentRepository reviewAssignmentRepository) {
+                        ReviewAssignmentRepository reviewAssignmentRepository,
+                        NotificationService notificationService) {
                 this.reviewRepository = reviewRepository;
                 this.sentimentResultRepository = sentimentResultRepository;
                 this.userRepository = userRepository;
                 this.reviewAssignmentRepository = reviewAssignmentRepository;
+                this.notificationService = notificationService;
         }
 
         // === ANALYST APIs ===
@@ -138,6 +142,10 @@ public class ReviewController {
                 review.setFlagNote(request.note());
                 reviewRepository.save(review);
 
+                // Tao thong bao khi flag review
+                try { notificationService.notifyReviewFlagged(id, request.priority()); }
+                catch (Exception e) { /* ignore */ }
+
                 Map<String, Object> data = new HashMap<>();
                 data.put("id", review.getId());
                 data.put("status", review.getStatus());
@@ -167,6 +175,10 @@ public class ReviewController {
                                 .deadline(request.deadline())
                                 .build();
                 reviewAssignmentRepository.save(assignment);
+
+                // Tao thong bao khi assign review
+                try { notificationService.notifyReviewAssigned(id, assignee.getFullName()); }
+                catch (Exception e) { /* ignore */ }
 
                 Map<String, Object> data = new HashMap<>();
                 data.put("review_id", review.getId());
