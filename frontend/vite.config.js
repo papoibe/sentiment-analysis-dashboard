@@ -15,4 +15,12 @@ export default defineConfig({
       },
     },
   },
+  // Vitest — cấu hình unit test
+  test: {
+    globals: true,           // Cho phép dùng describe, it, expect không cần import
+    environment: 'jsdom',    // Giả lập DOM cho React components
+    setupFiles: './src/test/setup.js',  // Setup file chạy trước mỗi test
+    css: { modules: { classNameStrategy: 'non-scoped' } }, // Hỗ trợ CSS modules
+  },
 })
+
