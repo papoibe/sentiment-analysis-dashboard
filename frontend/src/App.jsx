@@ -1,6 +1,8 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider } from './context/AuthContext';
+import { NotificationProvider } from './context/NotificationContext';
 import MainLayout from './components/Layout/MainLayout';
+import ProtectedRoute from './components/common/ProtectedRoute';
 
 // Auth pages
 import LoginPage from './pages/auth/LoginPage';
@@ -30,43 +32,46 @@ import AlertsPage from './pages/manager/AlertsPage';
 function App() {
   return (
     <AuthProvider>
+      <NotificationProvider>
       <BrowserRouter>
         <Routes>
-          {/* Public routes */}
+          {/* Public routes — không cần đăng nhập */}
           <Route path="/login" element={<LoginPage />} />
           <Route path="/register" element={<RegisterPage />} />
 
-          {/* Protected routes — bọc trong MainLayout (Sidebar + Header) */}
-          <Route element={<MainLayout />}>
+          {/* Protected routes — bọc ProtectedRoute + MainLayout */}
+          <Route element={<ProtectedRoute><MainLayout /></ProtectedRoute>}>
             {/* ANALYST — Dashboard, Reviews, Reports */}
-            <Route path="/dashboard" element={<DashboardPage />} />
-            <Route path="/reviews" element={<ReviewsPage />} />
-            <Route path="/reviews/top" element={<ReviewsPage />} />
-            <Route path="/reports" element={<ReportsPage />} />
-            <Route path="/reports/custom" element={<ReportsPage />} />
+            <Route path="/dashboard" element={<ProtectedRoute allowedRoles={['ANALYST', 'MANAGER', 'ADMIN']}><DashboardPage /></ProtectedRoute>} />
+            <Route path="/reviews" element={<ProtectedRoute allowedRoles={['ANALYST', 'MANAGER', 'ADMIN']}><ReviewsPage /></ProtectedRoute>} />
+            <Route path="/reviews/top" element={<ProtectedRoute allowedRoles={['ANALYST', 'MANAGER', 'ADMIN']}><ReviewsPage /></ProtectedRoute>} />
+            <Route path="/reports" element={<ProtectedRoute allowedRoles={['ANALYST', 'ADMIN']}><ReportsPage /></ProtectedRoute>} />
+            <Route path="/reports/custom" element={<ProtectedRoute allowedRoles={['ANALYST', 'ADMIN']}><ReportsPage /></ProtectedRoute>} />
 
             {/* MANAGER — Data Sources, Review Mgmt, Tracking, Alerts */}
-            <Route path="/data-sources" element={<DataSourcesPage />} />
-            <Route path="/data-sources/import" element={<ImportPage />} />
-            <Route path="/review-management" element={<ReviewManagementPage />} />
-            <Route path="/review-tracking" element={<ReviewTrackingPage />} />
-            <Route path="/alerts" element={<AlertsPage />} />
+            <Route path="/data-sources" element={<ProtectedRoute allowedRoles={['MANAGER', 'ADMIN']}><DataSourcesPage /></ProtectedRoute>} />
+            <Route path="/data-sources/import" element={<ProtectedRoute allowedRoles={['MANAGER', 'ADMIN']}><ImportPage /></ProtectedRoute>} />
+            <Route path="/review-management" element={<ProtectedRoute allowedRoles={['MANAGER', 'ADMIN']}><ReviewManagementPage /></ProtectedRoute>} />
+            <Route path="/review-tracking" element={<ProtectedRoute allowedRoles={['MANAGER', 'ADMIN']}><ReviewTrackingPage /></ProtectedRoute>} />
+            <Route path="/alerts" element={<ProtectedRoute allowedRoles={['MANAGER', 'ADMIN']}><AlertsPage /></ProtectedRoute>} />
 
             {/* ADMIN — Users, Settings, System Reports */}
-            <Route path="/users" element={<UserManagementPage />} />
-            <Route path="/users/create" element={<UserManagementPage />} />
-            <Route path="/settings" element={<SystemConfigPage />} />
-            <Route path="/settings/ai" element={<SystemConfigPage />} />
-            <Route path="/settings/keywords" element={<SystemConfigPage />} />
-            <Route path="/system-reports" element={<SystemReportsPage />} />
+            <Route path="/users" element={<ProtectedRoute allowedRoles={['ADMIN']}><UserManagementPage /></ProtectedRoute>} />
+            <Route path="/users/create" element={<ProtectedRoute allowedRoles={['ADMIN']}><UserManagementPage /></ProtectedRoute>} />
+            <Route path="/settings" element={<ProtectedRoute allowedRoles={['ADMIN']}><SystemConfigPage /></ProtectedRoute>} />
+            <Route path="/settings/ai" element={<ProtectedRoute allowedRoles={['ADMIN']}><SystemConfigPage /></ProtectedRoute>} />
+            <Route path="/settings/keywords" element={<ProtectedRoute allowedRoles={['ADMIN']}><SystemConfigPage /></ProtectedRoute>} />
+            <Route path="/system-reports" element={<ProtectedRoute allowedRoles={['ADMIN']}><SystemReportsPage /></ProtectedRoute>} />
           </Route>
 
           <Route path="/" element={<Navigate to="/login" replace />} />
           <Route path="*" element={<Navigate to="/login" replace />} />
         </Routes>
       </BrowserRouter>
+      </NotificationProvider>
     </AuthProvider>
   );
 }
 
 export default App;
+
