@@ -1,6 +1,5 @@
 /* ============================================
-   Header — 56px, breadcrumb + avatar
-   Tham khảo: Frontend-Guide.md mục 4.3
+   Header — 56px, breadcrumb + avatar + notification
    ============================================ */
 
 .header {
@@ -16,7 +15,7 @@
   z-index: 50;
 }
 
-/* Breadcrumb bên trái */
+/* Breadcrumb ben trai */
 .breadcrumb {
   display: flex;
   align-items: center;
@@ -30,14 +29,19 @@
   font-weight: 600;
 }
 
-/* Actions bên phải */
+/* Actions ben phai */
 .actions {
   display: flex;
   align-items: center;
   gap: 16px;
 }
 
-/* Nút notification — icon chuông + badge đỏ */
+/* Wrapper cho notification bell + dropdown */
+.notiWrapper {
+  position: relative;
+}
+
+/* Nut notification — icon chuong + badge do */
 .notifBtn {
   position: relative;
   width: 36px;
@@ -50,6 +54,7 @@
   font-size: 16px;
   cursor: pointer;
   transition: background var(--transition-fast);
+  border: none;
 }
 
 .notifBtn:hover {
@@ -80,7 +85,146 @@
   object-fit: contain;
 }
 
-/* SVG icon trong dropdown menu */
+/* ========= NOTIFICATION PANEL DROPDOWN ========= */
+.notiPanel {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  width: 360px;
+  max-height: 420px;
+  background: white;
+  border-radius: var(--radius-lg);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12);
+  border: 1px solid var(--border-color);
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(-8px) scale(0.97);
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  z-index: 300;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.notiPanelOpen {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0) scale(1);
+}
+
+/* Header cua notification panel */
+.notiHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 16px;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.notiHeader h4 {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin: 0;
+}
+
+.markAllBtn {
+  font-size: 12px;
+  color: var(--primary);
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-weight: 600;
+  padding: 4px 8px;
+  border-radius: 6px;
+  transition: background 0.15s;
+}
+
+.markAllBtn:hover {
+  background: var(--primary-light, #f0f0f0);
+}
+
+/* Danh sach thong bao — cuon doc */
+.notiList {
+  overflow-y: auto;
+  flex: 1;
+  max-height: 350px;
+}
+
+/* Moi thong bao */
+.notiItem {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 12px 16px;
+  cursor: pointer;
+  transition: background 0.15s;
+  position: relative;
+  border-bottom: 1px solid var(--border-light, #f5f5f5);
+}
+
+.notiItem:hover {
+  background: var(--border-light, #fafafa);
+}
+
+/* Thong bao chua doc — highlight */
+.notiUnread {
+  background: #fef9e7;
+}
+
+.notiUnread:hover {
+  background: #fef3cd;
+}
+
+/* Icon loai thong bao */
+.notiIcon {
+  font-size: 18px;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+/* Noi dung thong bao */
+.notiContent {
+  flex: 1;
+  min-width: 0;
+}
+
+.notiTitle {
+  font-size: 13px;
+  color: var(--text-primary);
+  line-height: 1.4;
+  word-break: break-word;
+}
+
+.notiUnread .notiTitle {
+  font-weight: 600;
+}
+
+.notiTime {
+  font-size: 11px;
+  color: var(--text-secondary);
+  margin-top: 3px;
+}
+
+/* Cham xanh bao chua doc */
+.notiDot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--primary, #d4a843);
+  flex-shrink: 0;
+  margin-top: 6px;
+}
+
+/* Khi khong co thong bao */
+.notiEmpty {
+  padding: 32px 16px;
+  text-align: center;
+  color: var(--text-secondary);
+  font-size: 13px;
+}
+
+/* ========= SVG ICON DROPDOWN ========= */
 .dropdownIcon {
   width: 16px;
   height: 16px;
@@ -88,7 +232,7 @@
   opacity: 0.6;
 }
 
-/* Avatar + tên user */
+/* Avatar + ten user */
 .userInfo {
   display: flex;
   align-items: center;
@@ -128,7 +272,7 @@
   color: var(--text-secondary);
 }
 
-/* Dropdown menu — hiện khi click avatar */
+/* Dropdown menu — hien khi click avatar */
 .dropdown {
   position: absolute;
   top: 100%;

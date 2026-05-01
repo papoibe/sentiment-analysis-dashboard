@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
+import { useNotifications } from '../../context/NotificationContext';
 import styles from './Header.module.css';
 
 // SVG Icons
@@ -9,7 +10,7 @@ import usersIcon from '../../assets/icons/users.svg';
 import passwordIcon from '../../assets/icons/password.svg';
 import logoutIcon from '../../assets/icons/logout.svg';
 
-// Map đường dẫn → tên breadcrumb tiếng Việt
+// Map duong dan → ten breadcrumb tieng Viet
 const breadcrumbMap = {
   '/dashboard': ['Dashboard', 'Tổng quan'],
   '/reviews': ['Reviews', 'Danh sách'],
@@ -29,28 +30,49 @@ const breadcrumbMap = {
   '/system-reports': ['Báo cáo hệ thống', 'Tổng quan'],
 };
 
+// Icon cho tung loai thong bao
+const typeIcons = { info: '🔵', warning: '🟡', alert: '🔴', success: '🟢' };
+
+// Format thoi gian tuong doi (vd: "2 phút trước")
+const timeAgo = (dateStr) => {
+  if (!dateStr) return '';
+  const diff = Date.now() - new Date(dateStr).getTime();
+  const mins = Math.floor(diff / 60000);
+  if (mins < 1) return 'Vừa xong';
+  if (mins < 60) return `${mins} phút trước`;
+  const hours = Math.floor(mins / 60);
+  if (hours < 24) return `${hours} giờ trước`;
+  return `${Math.floor(hours / 24)} ngày trước`;
+};
+
 const Header = () => {
   const { user, logoutAction } = useAuth();
+  const { notifications, unreadCount, markAsRead, markAllAsRead } = useNotifications();
   const navigate = useNavigate();
   const location = useLocation();
   const [dropdownOpen, setDropdownOpen] = useState(false);
+  const [notiOpen, setNotiOpen] = useState(false); // Notification dropdown
   const dropdownRef = useRef(null);
+  const notiRef = useRef(null);
 
-  // Đóng dropdown khi click ra ngoài
+  // Dong dropdown khi click ra ngoai
   useEffect(() => {
     const handleClickOutside = (e) => {
       if (dropdownRef.current && !dropdownRef.current.contains(e.target)) {
         setDropdownOpen(false);
+      }
+      if (notiRef.current && !notiRef.current.contains(e.target)) {
+        setNotiOpen(false);
       }
     };
     document.addEventListener('mousedown', handleClickOutside);
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
-  // Lấy breadcrumb từ URL hiện tại
+  // Lay breadcrumb tu URL hien tai
   const crumbs = breadcrumbMap[location.pathname] || ['Trang chủ'];
 
-  // Lấy chữ cái đầu của tên user làm avatar
+  // Lay chu cai dau cua ten user lam avatar
   const initials = user?.fullName
     ? user.fullName.split(' ').map((w) => w[0]).join('').slice(0, 2).toUpperCase()
     : 'U';
@@ -74,13 +96,68 @@ const Header = () => {
         ))}
       </div>
 
-      {/* Actions bên phải */}
+      {/* Actions ben phai */}
       <div className={styles.actions}>
-        {/* Notification bell */}
-        <button className={styles.notifBtn}>
-          <img src={notificationIcon} alt="Thông báo" className={styles.notifIcon} />
-          <span className={styles.notifBadge}>3</span>
-        </button>
+        {/* Notification bell + dropdown */}
+        <div className={styles.notiWrapper} ref={notiRef}>
+          <button
+            className={styles.notifBtn}
+            onClick={() => setNotiOpen(!notiOpen)}
+            aria-label="Thông báo"
+          >
+            <img src={notificationIcon} alt="Thông báo" className={styles.notifIcon} />
+            {unreadCount > 0 && (
+              <span className={styles.notifBadge}>
+                {unreadCount > 9 ? '9+' : unreadCount}
+              </span>
+            )}
+          </button>
+
+          {/* Notification Panel Dropdown */}
+          <div className={`${styles.notiPanel} ${notiOpen ? styles.notiPanelOpen : ''}`}>
+            <div className={styles.notiHeader}>
+              <h4>Thông báo</h4>
+              {unreadCount > 0 && (
+                <button
+                  className={styles.markAllBtn}
+                  onClick={() => { markAllAsRead(); }}
+                >
+                  Đọc tất cả
+                </button>
+              )}
+            </div>
+            <div className={styles.notiList}>
+              {notifications.length === 0 ? (
+                <div className={styles.notiEmpty}>Không có thông báo</div>
+              ) : (
+                notifications.slice(0, 20).map((noti) => (
+                  <div
+                    key={noti.id}
+                    className={`${styles.notiItem} ${
+                      !noti.isRead && !noti.read ? styles.notiUnread : ''
+                    }`}
+                    onClick={() => {
+                      if (!noti.isRead && !noti.read) markAsRead(noti.id);
+                    }}
+                  >
+                    <span className={styles.notiIcon}>
+                      {typeIcons[noti.type] || typeIcons.info}
+                    </span>
+                    <div className={styles.notiContent}>
+                      <div className={styles.notiTitle}>{noti.title}</div>
+                      <div className={styles.notiTime}>
+                        {timeAgo(noti.sentAt || noti.createdAt)}
+                      </div>
+                    </div>
+                    {!noti.isRead && !noti.read && (
+                      <span className={styles.notiDot} />
+                    )}
+                  </div>
+                ))
+              )}
+            </div>
+          </div>
+        </div>
 
         {/* Avatar + Dropdown */}
         <div className={styles.userInfo} ref={dropdownRef} onClick={() => setDropdownOpen(!dropdownOpen)}>
