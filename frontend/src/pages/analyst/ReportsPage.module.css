@@ -1,41 +1,208 @@
-.pageTitle { font-size: 24px; font-weight: 700; margin-bottom: 20px; }
-.sectionTitle { font-size: 16px; font-weight: 600; margin-bottom: 16px; }
+.pageTitle {
+  font-size: 24px;
+  font-weight: 700;
+  margin-bottom: 20px;
+}
+
+.sectionTitle {
+  font-size: 16px;
+  font-weight: 600;
+  margin-bottom: 16px;
+}
+
 .exportCard {
-  background: var(--bg-card); border-radius: var(--radius-md);
-  padding: 24px; box-shadow: var(--shadow-md); margin-bottom: 16px;
+  background: var(--bg-card);
+  border-radius: var(--radius-md);
+  padding: 24px;
+  box-shadow: var(--shadow-md);
+  margin-bottom: 16px;
 }
-.formGrid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 20px; }
-@media (max-width: 768px) { .formGrid { grid-template-columns: 1fr; } }
-.formGroup { display: flex; flex-direction: column; gap: 8px; }
-.label { font-size: 13px; font-weight: 600; color: var(--text-secondary); }
-.radioGroup { display: flex; gap: 12px; }
+
+.formGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+  margin-bottom: 20px;
+}
+
+@media (max-width: 768px) {
+  .formGrid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.formGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.label {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-secondary);
+}
+
+.radioGroup {
+  display: flex;
+  gap: 12px;
+}
+
 .radioLabel {
-  display: flex; align-items: center; gap: 6px; padding: 8px 16px;
-  border: 1px solid var(--border-color); border-radius: var(--radius-sm);
-  cursor: pointer; font-size: 14px; transition: all var(--transition-fast);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 16px;
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  font-size: 14px;
+  transition: all var(--transition-fast);
 }
-.radioLabel input[type="radio"] { display: none; }
-.radioActive { border-color: var(--primary); background: var(--primary-light); font-weight: 600; }
-.checkboxGroup { display: flex; flex-direction: column; gap: 8px; }
+
+.radioLabel input[type="radio"] {
+  display: none;
+}
+
+.radioActive {
+  border-color: var(--primary);
+  background: var(--primary-light);
+  font-weight: 600;
+}
+
+.checkboxGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
 .checkboxLabel {
-  display: flex; align-items: center; gap: 8px;
-  font-size: 14px; cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  cursor: pointer;
 }
-.dateRange { display: flex; align-items: center; gap: 10px; }
+
+.dateRange {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
 .dateInput {
-  padding: 8px 12px; border: 1px solid var(--border-color);
-  border-radius: var(--radius-sm); font-size: 14px; flex: 1;
+  padding: 8px 12px;
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-sm);
+  font-size: 14px;
+  flex: 1;
 }
+
 .exportBtn {
-  width: 100%; padding: 12px; background: var(--primary); color: white;
-  border-radius: var(--radius-sm); font-size: 15px; font-weight: 600;
-  cursor: pointer; transition: background var(--transition-fast);
+  width: 100%;
+  padding: 12px;
+  background: var(--primary);
+  color: white;
+  border-radius: var(--radius-sm);
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background var(--transition-fast);
 }
-.exportBtn:hover:not(:disabled) { background: var(--primary-dark); }
-.exportBtn:disabled { opacity: 0.7; cursor: wait; }
+
+.exportBtn:hover:not(:disabled) {
+  background: var(--primary-dark);
+}
+
+.exportBtn:disabled {
+  opacity: 0.7;
+  cursor: wait;
+}
+
 .actionBtn {
-  width: 30px; height: 30px; border-radius: var(--radius-sm);
-  background: var(--border-light); font-size: 14px; cursor: pointer;
-  display: flex; align-items: center; justify-content: center;
+  width: 30px;
+  height: 30px;
+  border-radius: var(--radius-sm);
+  background: var(--border-light);
+  font-size: 14px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
-.actionBtn:hover { background: var(--border-color); }
+
+.actionBtn:hover {
+  background: var(--border-color);
+}
+
+/* Modal */
+.modalOverlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 500;
+}
+
+.modalBox {
+  background: white;
+  border-radius: var(--radius-lg);
+  padding: 24px;
+  width: 440px;
+  box-shadow: var(--shadow-lg);
+}
+
+.modalBox h3 {
+  margin-bottom: 16px;
+  font-size: 18px;
+}
+
+.modalActions {
+  display: flex;
+  gap: 12px;
+  justify-content: flex-end;
+}
+
+.modalCancel {
+  padding: 8px 20px;
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-sm);
+  background: white;
+  cursor: pointer;
+}
+
+.modalConfirm {
+  padding: 8px 20px;
+  background: var(--primary);
+  color: white;
+  border-radius: var(--radius-sm);
+  font-weight: 600;
+  cursor: pointer;
+}
+
+/* Chi tiết báo cáo */
+.detailGrid {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.detailItem {
+  display: flex;
+  justify-content: space-between;
+  padding: 8px 12px;
+  background: var(--border-light);
+  border-radius: var(--radius-sm);
+}
+
+.detailItem span {
+  font-size: 13px;
+  color: var(--text-secondary);
+}
+
+.detailItem strong {
+  font-size: 13px;
+}

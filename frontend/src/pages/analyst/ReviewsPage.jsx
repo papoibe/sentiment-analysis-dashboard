@@ -1,7 +1,8 @@
-import { useState, useMemo } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import DataTable from '../../components/Table/DataTable';
 import Badge from '../../components/common/Badge';
 import Pagination from '../../components/common/Pagination';
+import { getReviews, getTopReviews } from '../../services/reviewService';
 import { mockReviews } from '../../utils/mockData';
 import styles from './ReviewsPage.module.css';
 
@@ -13,8 +14,8 @@ import positiveIcon from '../../assets/icons/positive.svg';
 import negativeIcon from '../../assets/icons/negative.svg';
 
 // Reviews Page — Analyst
-// Tham khảo: Frontend-Guide.md mục 5 Trang 4
 const ReviewsPage = () => {
+  const [reviews, setReviews] = useState(mockReviews); // Fallback mockData
   const [search, setSearch] = useState('');
   const [sentimentFilter, setSentimentFilter] = useState('ALL');
   const [activeTab, setActiveTab] = useState('all'); // all | top_positive | top_negative
@@ -22,9 +23,24 @@ const ReviewsPage = () => {
   const [pageSize, setPageSize] = useState(10);
   const [selectedReview, setSelectedReview] = useState(null); // Cho AI modal
 
+  // Gọi API lấy reviews từ backend
+  useEffect(() => {
+    const fetchReviews = async () => {
+      try {
+        const res = await getReviews();
+        if (res?.data && Array.isArray(res.data)) {
+          setReviews(res.data);
+        }
+      } catch (err) {
+        console.warn('Backend chưa sẵn sàng, dùng mockData:', err.message);
+      }
+    };
+    fetchReviews();
+  }, []);
+
   // Lọc + tìm kiếm dữ liệu
   const filteredData = useMemo(() => {
-    let data = [...mockReviews];
+    let data = [...reviews];
 
     // Tab filter
     if (activeTab === 'top_positive') data = data.filter((r) => r.sentiment === 'POSITIVE').sort((a, b) => b.confidence - a.confidence);
