@@ -63,6 +63,16 @@ public class ReportController {
         return ResponseEntity.ok(ApiResponse.success(report));
     }
 
+    // DELETE /reports/custom/{id} - Xoa custom report
+    @DeleteMapping("/custom/{id}")
+    public ResponseEntity<ApiResponse<String>> deleteCustomReport(@PathVariable Long id) {
+        if (!customReportRepository.existsById(id)) {
+            throw new ResourceNotFoundException("Custom report không tồn tại");
+        }
+        customReportRepository.deleteById(id);
+        return ResponseEntity.ok(ApiResponse.success("Đã xóa report #" + id));
+    }
+
     // GET /reports/export - Export du lieu reviews (Excel, PDF, hoac JSON)
     // Params: format (excel/pdf/json), dataSourceId, fromDate, toDate
     @GetMapping("/export")
