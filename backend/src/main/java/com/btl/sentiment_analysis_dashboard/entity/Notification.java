@@ -19,8 +19,18 @@ public class Notification {
     @Column(nullable = false, length = 200)
     private String title;
 
-    @Column(nullable = false, columnDefinition = "TEXT")
+    @Column(columnDefinition = "TEXT") // Cho phep null de frontend chi can gui title
     private String content;
+
+    // Loai thong bao: info, warning, alert
+    @Column(length = 20)
+    @Builder.Default
+    private String type = "info";
+
+    // Kenh gui: IN_APP, EMAIL, SMS
+    @Column(length = 20)
+    @Builder.Default
+    private String channel = "IN_APP";
 
     // Nguoi gui (Admin)
     @ManyToOne(fetch = FetchType.LAZY)
