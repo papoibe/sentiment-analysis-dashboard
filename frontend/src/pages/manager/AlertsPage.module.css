@@ -37,3 +37,10 @@
   display: flex; align-items: center; justify-content: center;
 }
 .actionBtn:hover { background: var(--border-color); }
+
+/* Modal */
+.modalOverlay { position: fixed; inset: 0; background: rgba(0,0,0,0.4); display: flex; align-items: center; justify-content: center; z-index: 500; }
+.modalBox { background: white; border-radius: var(--radius-lg); padding: 24px; width: 420px; box-shadow: var(--shadow-lg); }
+.modalBox h3 { margin-bottom: 16px; font-size: 18px; }
+.modalActions { display: flex; gap: 12px; justify-content: flex-end; }
+.deleteBtn { padding: 8px 20px; background: var(--negative); color: white; border-radius: var(--radius-sm); font-weight: 600; cursor: pointer; }

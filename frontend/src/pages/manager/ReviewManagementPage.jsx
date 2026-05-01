@@ -1,7 +1,8 @@
-import { useState, useMemo } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import DataTable from '../../components/Table/DataTable';
 import Badge from '../../components/common/Badge';
 import Pagination from '../../components/common/Pagination';
+import { getReviews, flagReview, assignReview } from '../../services/reviewService';
 import { mockReviews } from '../../utils/mockData';
 import styles from './ReviewManagementPage.module.css';
 
@@ -9,57 +10,115 @@ import styles from './ReviewManagementPage.module.css';
 import flagIcon from '../../assets/icons/flag.svg';
 import assignIcon from '../../assets/icons/assign.svg';
 
-// Review Management — Manager (Flag + Assign)
-// Tham khảo: Frontend-Guide.md Trang 7
+// Review Management — Manager (Flag + Assign gọi API thật)
 const ReviewManagementPage = () => {
-  const [reviews, setReviews] = useState(mockReviews);
+  const [reviews, setReviews] = useState([]);
+  const [users, setUsers] = useState([]); // Danh sách users cho Assign
+
+  // Gọi API lấy danh sách reviews (paged response)
+  useEffect(() => {
+    const fetchReviews = async () => {
+      try {
+        const res = await getReviews({ size: 100 });
+        // Backend trả { data: { content: [...], total_elements, ... } }
+        if (res?.data?.content && Array.isArray(res.data.content)) {
+          setReviews(res.data.content);
+        } else if (res?.data && Array.isArray(res.data)) {
+          setReviews(res.data);
+        }
+      } catch (err) {
+        console.warn('Backend chưa sẵn sàng, dùng mockData:', err.message);
+        setReviews(mockReviews);
+      }
+    };
+    fetchReviews();
+  }, []);
+
+  // Lấy danh sách users cho dropdown Assign
+  useEffect(() => {
+    const fetchUsers = async () => {
+      try {
+        const { default: api } = await import('../../services/api');
+        const res = await api.get('/v1/users');
+        if (res?.data?.data && Array.isArray(res.data.data)) {
+          setUsers(res.data.data);
+        }
+      } catch (err) {
+        // Fallback hardcoded users
+        setUsers([
+          { id: 3, fullName: 'Tran Thi Analyst', username: 'analyst' },
+        ]);
+      }
+    };
+    fetchUsers();
+  }, []);
+
   const [search, setSearch] = useState('');
   const [statusFilter, setStatusFilter] = useState('ALL');
   const [flagModal, setFlagModal] = useState(null);
   const [assignModal, setAssignModal] = useState(null);
   const [flagPriority, setFlagPriority] = useState('MEDIUM');
   const [flagNote, setFlagNote] = useState('');
-  const [assignUser, setAssignUser] = useState('');
+  const [assignUserId, setAssignUserId] = useState('');
+  const [assignDeadline, setAssignDeadline] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
 
   const filtered = useMemo(() => {
     let data = [...reviews];
     if (statusFilter !== 'ALL') data = data.filter((r) => r.status === statusFilter);
-    if (search.trim()) data = data.filter((r) => r.content.toLowerCase().includes(search.toLowerCase()));
+    if (search.trim()) data = data.filter((r) => r.content?.toLowerCase().includes(search.toLowerCase()));
     return data;
   }, [reviews, search, statusFilter]);
 
   const totalPages = Math.ceil(filtered.length / 10);
   const pagedData = filtered.slice((currentPage - 1) * 10, currentPage * 10);
 
-  // Xử lý Flag review
-  const handleFlag = () => {
-    setReviews((prev) => prev.map((r) =>
-      r.id === flagModal.id ? { ...r, status: 'FLAGGED', priority: flagPriority } : r
-    ));
+  // Flag review — gọi PUT /api/v1/reviews/:id/flag
+  const handleFlag = async () => {
+    try {
+      await flagReview(flagModal.id, { priority: flagPriority, note: flagNote });
+      // Cập nhật local state sau khi API thành công
+      setReviews((prev) => prev.map((r) =>
+        r.id === flagModal.id ? { ...r, status: 'FLAGGED', priority: flagPriority } : r
+      ));
+    } catch (err) {
+      console.error('Flag lỗi:', err);
+      alert('Flag review thất bại.');
+    }
     setFlagModal(null);
     setFlagNote('');
     setFlagPriority('MEDIUM');
   };
 
-  // Xử lý Assign review cho analyst
-  const handleAssign = () => {
-    setReviews((prev) => prev.map((r) =>
-      r.id === assignModal.id ? { ...r, status: 'ASSIGNED', assignedTo: assignUser } : r
-    ));
+  // Assign review cho analyst — gọi PUT /api/v1/reviews/:id/assign
+  const handleAssign = async () => {
+    try {
+      await assignReview(assignModal.id, {
+        assignedTo: Number(assignUserId), // Backend expect user ID (Long)
+        deadline: assignDeadline || null,
+      });
+      const user = users.find((u) => u.id === Number(assignUserId));
+      setReviews((prev) => prev.map((r) =>
+        r.id === assignModal.id ? { ...r, status: 'ASSIGNED', assignedTo: user?.fullName || assignUserId } : r
+      ));
+    } catch (err) {
+      console.error('Assign lỗi:', err);
+      alert('Assign review thất bại.');
+    }
     setAssignModal(null);
-    setAssignUser('');
+    setAssignUserId('');
+    setAssignDeadline('');
   };
 
   const statusBadge = (status) => {
-    const map = { ANALYZED: 'positive', FLAGGED: 'negative', ASSIGNED: 'analyst' };
-    return <Badge type={map[status] || 'neutral'}>{status}</Badge>;
+    const map = { ANALYZED: 'positive', FLAGGED: 'negative', ASSIGNED: 'analyst', NEW: 'neutral' };
+    return <Badge type={map[status] || 'neutral'}>{status || 'NEW'}</Badge>;
   };
 
   const columns = [
-    { key: 'content', label: 'Nội dung', render: (val) => <span title={val}>{val.length > 50 ? val.slice(0, 50) + '...' : val}</span> },
-    { key: 'sentiment', label: 'Sentiment', render: (val) => <Badge type={val.toLowerCase()}>{val}</Badge> },
-    { key: 'confidence', label: 'Conf.', render: (val) => `${(val * 100).toFixed(0)}%` },
+    { key: 'content', label: 'Nội dung', render: (val) => <span title={val}>{val?.length > 50 ? val.slice(0, 50) + '...' : val}</span> },
+    { key: 'sentiment', label: 'Sentiment', render: (val) => val ? <Badge type={val.toLowerCase()}>{val}</Badge> : '—' },
+    { key: 'confidence', label: 'Conf.', render: (val) => val ? `${(val * 100).toFixed(0)}%` : '—' },
     { key: 'status', label: 'Trạng thái', render: (val) => statusBadge(val) },
     { key: 'source', label: 'Nguồn' },
   ];
@@ -74,6 +133,7 @@ const ReviewManagementPage = () => {
         <select className={styles.filterSelect} value={statusFilter}
           onChange={(e) => { setStatusFilter(e.target.value); setCurrentPage(1); }}>
           <option value="ALL">Tất cả trạng thái</option>
+          <option value="NEW">New</option>
           <option value="ANALYZED">Analyzed</option>
           <option value="FLAGGED">Flagged</option>
           <option value="ASSIGNED">Assigned</option>
@@ -83,8 +143,12 @@ const ReviewManagementPage = () => {
       <DataTable columns={columns} data={pagedData}
         actions={(row) => (
           <>
-            <button className={styles.flagBtn} title="Flag review" onClick={() => setFlagModal(row)}><img src={flagIcon} alt="Flag" style={{width:'16px',height:'16px'}} /></button>
-            <button className={styles.assignBtn} title="Assign cho analyst" onClick={() => setAssignModal(row)}><img src={assignIcon} alt="Assign" style={{width:'16px',height:'16px'}} /></button>
+            <button className={styles.flagBtn} title="Flag review" onClick={() => setFlagModal(row)}>
+              <img src={flagIcon} alt="Flag" style={{ width: '16px', height: '16px' }} />
+            </button>
+            <button className={styles.assignBtn} title="Assign cho analyst" onClick={() => setAssignModal(row)}>
+              <img src={assignIcon} alt="Assign" style={{ width: '16px', height: '16px' }} />
+            </button>
           </>
         )}
       />
@@ -95,8 +159,8 @@ const ReviewManagementPage = () => {
       {flagModal && (
         <div className={styles.modalOverlay} onClick={() => setFlagModal(null)}>
           <div className={styles.modal} onClick={(e) => e.stopPropagation()}>
-            <h3><img src={flagIcon} alt="" style={{width:'18px',height:'18px',verticalAlign:'middle',marginRight:'6px'}} />Flag Review</h3>
-            <p className={styles.modalContent}>"{flagModal.content.slice(0, 80)}..."</p>
+            <h3><img src={flagIcon} alt="" style={{ width: '18px', height: '18px', verticalAlign: 'middle', marginRight: '6px' }} />Flag Review</h3>
+            <p className={styles.modalContent}>"{flagModal.content?.slice(0, 80)}..."</p>
             <div className={styles.formGroup}>
               <label>Priority</label>
               <select className={styles.select} value={flagPriority} onChange={(e) => setFlagPriority(e.target.value)}>
@@ -122,19 +186,25 @@ const ReviewManagementPage = () => {
       {assignModal && (
         <div className={styles.modalOverlay} onClick={() => setAssignModal(null)}>
           <div className={styles.modal} onClick={(e) => e.stopPropagation()}>
-            <h3><img src={assignIcon} alt="" style={{width:'18px',height:'18px',verticalAlign:'middle',marginRight:'6px'}} />Assign Review</h3>
-            <p className={styles.modalContent}>"{assignModal.content.slice(0, 80)}..."</p>
+            <h3><img src={assignIcon} alt="" style={{ width: '18px', height: '18px', verticalAlign: 'middle', marginRight: '6px' }} />Assign Review</h3>
+            <p className={styles.modalContent}>"{assignModal.content?.slice(0, 80)}..."</p>
             <div className={styles.formGroup}>
               <label>Chọn Analyst</label>
-              <select className={styles.select} value={assignUser} onChange={(e) => setAssignUser(e.target.value)}>
+              <select className={styles.select} value={assignUserId} onChange={(e) => setAssignUserId(e.target.value)}>
                 <option value="">-- Chọn user --</option>
-                <option value="analyst">Tran Thi Analyst</option>
-                <option value="analyst2">Le Van Analyst2</option>
+                {users.map((u) => (
+                  <option key={u.id} value={u.id}>{u.fullName} ({u.username})</option>
+                ))}
               </select>
+            </div>
+            <div className={styles.formGroup}>
+              <label>Deadline</label>
+              <input type="date" className={styles.select} value={assignDeadline}
+                onChange={(e) => setAssignDeadline(e.target.value)} />
             </div>
             <div className={styles.modalActions}>
               <button className={styles.cancelBtn} onClick={() => setAssignModal(null)}>Hủy</button>
-              <button className={styles.confirmBtn} disabled={!assignUser} onClick={handleAssign}>Assign</button>
+              <button className={styles.confirmBtn} disabled={!assignUserId} onClick={handleAssign}>Assign</button>
             </div>
           </div>
         </div>
